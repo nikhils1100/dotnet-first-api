@@ -1,0 +1,31 @@
+﻿@model CRUD_NwDb.Models.Customer
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <form method="POST" asp-action="Details">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="CustomerId">Id : </label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" asp-for="CustomerId" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <input type="submit" class="btn btn-primary w-100" value="Submit"/>
+                </div> 
+            </form>
+        </div>
+        <div class="col-6">
+            <a asp-controller="Customer" asp-action="Create" class="btn btn-success w-50">Create</a>
+        </div>
+    </div>
+</div>
+

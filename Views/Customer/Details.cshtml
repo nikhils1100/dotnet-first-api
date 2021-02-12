@@ -1,0 +1,44 @@
+﻿@model IEnumerable<CRUD_NwDb.Models.Customer>
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Customer</h4>
+    <hr />
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Customer Id
+                    </th>
+                    <th>
+                        Company Name
+                    </th>
+                    <th>
+                        Phone Number
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td width="30%">@obj.CustomerId</td>
+                        <td width="30%">@obj.CompanyName</td>
+                        <td class="text-center">@obj.Phone</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<div>
+    
+    <a asp-action="Index">Back to List</a>
+</div>
