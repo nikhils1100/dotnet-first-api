@@ -2,6 +2,7 @@
 using CRUD_NwDb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,10 @@ namespace CRUD_NwDb.Controllers
             {
                 var objList = _db.Customer.Find(CustomerId);
                 // var objList2 = (IEnumerable<Customer>)_db.Customer.Where(b=>b.CustomerId==CustomerId);
-                return objList.City; // Ok - Library for returning Json response
+
+                string obj_json = JsonConvert.SerializeObject(objList);
+
+                return obj_json; // Ok - Library for returning Json response
             }
             else
             {
@@ -45,12 +49,6 @@ namespace CRUD_NwDb.Controllers
             }
         }
 
-        // GET: CustomerController/Create
-        [HttpGet("Create")]
-        public ActionResult Create()
-        {
-            return View();
-        }
 
         // POST: CustomerController/Create
         [HttpPost("Create/post")]
@@ -74,20 +72,17 @@ namespace CRUD_NwDb.Controllers
 
                 _db.Customer.Add(obj);
                 _db.SaveChanges();
-                return "Succesful";
+
+                string obj_json = JsonConvert.SerializeObject(obj);
+                return obj_json;
                 //return RedirectToAction("Index");
             }
             catch
             {
-                return "View()";
+                return "Error";
             }
         }
 
-        // GET: CustomerController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
         // POST: CustomerController/Edit/5
         [HttpPost("Edit")]
@@ -111,24 +106,21 @@ namespace CRUD_NwDb.Controllers
                     obj.PostalCode = collection["PostalCode"];
 
                     _db.SaveChanges();
+
+                    string obj_json = JsonConvert.SerializeObject(obj);
+                    return obj_json;
                 }
                 else
                 {
                     return "Record not found";
                 }
-                return "Success";
-            }
+}
             catch
             {
                 return "Not working";
             }
         }
 
-        // GET: CustomerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: CustomerController/Delete/5
         [HttpPost("Delete")]
@@ -145,7 +137,8 @@ namespace CRUD_NwDb.Controllers
                     _db.Customer.Remove(obj);
                     _db.SaveChanges();
 
-                    return "Deleted Successfully";
+                    string obj_json = JsonConvert.SerializeObject(obj);
+                    return obj_json;
                 }
                 else
                 {
