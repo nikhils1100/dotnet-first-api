@@ -1,12 +1,19 @@
 ﻿using CRUD_NwDb.Data;
 using CRUD_NwDb.Models;
+using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.AccessControl;
 using System.Linq;
 using System.Threading.Tasks;
+using CRUD_NwDb;
+using System.Globalization;
+using System.Text;
+using CsvHelper.Configuration;
 
 namespace CRUD_NwDb.Controllers
 {
@@ -23,7 +30,7 @@ namespace CRUD_NwDb.Controllers
 
         // GET: CustomerController
         [Route("Index")]
-        public IActionResult Index()
+        protected IActionResult Index()
         {
             return View();  
         }
@@ -32,32 +39,36 @@ namespace CRUD_NwDb.Controllers
         [HttpGet("details/{CustomerId}")]
         public string Details(int CustomerId)
         {
-            Console.WriteLine(CustomerId);
-            if (_db.Customer.Find(CustomerId) != null)
-            {
-                var objList = _db.Customer.Find(CustomerId);
-                // var objList2 = (IEnumerable<Customer>)_db.Customer.Where(b=>b.CustomerId==CustomerId);
+            try{
+                if (_db.Customer.Find(CustomerId) != null)
+                {
+                    var objList = _db.Customer.Find(CustomerId);
+                    // var objList2 = (IEnumerable<Customer>)_db.Customer.Where(b=>b.CustomerId==CustomerId);
 
-                string obj_json = JsonConvert.SerializeObject(objList);
+                    string obj_json = JsonConvert.SerializeObject(objList);
 
-                return obj_json; // Ok - Library for returning Json response
+                    return obj_json; // Ok - Library for returning Json response
+                }
+                else
+                {
+                    return "Not Found";
+                    //return NotFound();
+                }
             }
-            else
-            {
-                return "Not Found";
-                //return NotFound();
+            catch(Exception e){
+                throw;
             }
         }
 
 
         // POST: CustomerController/Create
         [HttpPost("Create/post")]
+        [Consumes("multipart/form-data")] // Required when testing in Swagger
         //[ValidateAntiForgeryToken]
         public string Create(IFormCollection collection)
         {
             try
             {
-                //Console.WriteLine(collection);
                 Customer obj = new Customer();
                 // As SET IDENTITY_INSERT Customer is set OFF, PK will be auto incremented and need not be inserted in the query
                 // obj.CustomerId = int.Parse(collection["CustomerId"]);
@@ -77,15 +88,16 @@ namespace CRUD_NwDb.Controllers
                 return obj_json;
                 //return RedirectToAction("Index");
             }
-            catch
+            catch(Exception e)
             {
-                return "Error";
+                throw;
             }
         }
 
 
         // POST: CustomerController/Edit/5
         [HttpPost("Edit")]
+        [Consumes("multipart/form-data")]
         //[ValidateAntiForgeryToken]
         public string Edit(IFormCollection collection)
         {
@@ -115,15 +127,16 @@ namespace CRUD_NwDb.Controllers
                     return "Record not found";
                 }
 }
-            catch
+            catch(Exception e)
             {
-                return "Not working";
+                throw;
             }
         }
 
 
         // POST: CustomerController/Delete/5
         [HttpPost("Delete")]
+        [Consumes("multipart/form-data")]
         //[ValidateAntiForgeryToken]
         public string Delete(IFormCollection collection)
         {
@@ -145,10 +158,55 @@ namespace CRUD_NwDb.Controllers
                     return "Record not found";
                 }
             }
-            catch
+            catch(Exception e)
             {
-                return "Error";
+                throw;
             }
         }
+
+        // GET: CustomerController/Csv/get
+        [HttpGet("Csv/get")]
+        public IActionResult GetCsvData(){
+            try{
+                var path = "C:\\Users\\Nikhil\\Downloads\\Northwind_database_csv\\customer_custom.csv";
+   
+                StreamReader reader = new StreamReader(path);
+                CsvReader csv_reader = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var records = csv_reader.GetRecords<Customer>().ToList();
+                
+                reader.Dispose();
+                csv_reader.Dispose();
+                return Ok(records);
+            }
+            catch(Exception e){
+                throw;
+            }
+        }
+
+        // POST: CustomerController/Csv/post
+        [HttpPost("Csv/post")]
+        public IActionResult WriteCsvData(Customer customer){
+            try{
+                var path = "C:\\Users\\Nikhil\\Downloads\\Northwind_database_csv\\customer_custom.csv";
+
+                // Append to the file.
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    // Don't write the header again.
+                    HasHeaderRecord = false,
+                };
+                using(Stream stream = System.IO.File.Open(path, FileMode.Append))
+                using(StreamWriter sw = new StreamWriter(stream))
+                using(CsvWriter csv_writer = new CsvWriter(sw, config)){
+                    csv_writer.WriteRecord<Customer>(customer);
+
+                    return Ok(customer);
+                }
+            }
+            catch(Exception e){
+                throw;
+            }
+        }
+
     }
 }
