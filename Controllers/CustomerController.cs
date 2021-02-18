@@ -35,26 +35,25 @@ namespace CRUD_NwDb.Controllers
 
         // GET: CustomerController/Details/5
         [HttpGet("details/{CustomerId}")]
-        public string Details(int CustomerId)
+        public IActionResult Details(int CustomerId)
         {
             try{
-                if (_db.Customer.Find(CustomerId) != null)
+                var objList = _db.Customer.Find(CustomerId);
+                if (objList!= null)
                 {
-                    var objList = _db.Customer.Find(CustomerId);
-                    // var objList2 = (IEnumerable<Customer>)_db.Customer.Where(b=>b.CustomerId==CustomerId);
+                    string obj_json = JsonConvert.SerializeObject(objList);
 
-                string obj_json = JsonConvert.SerializeObject(objList);
-
-                    return obj_json; 
+                    return Ok(obj_json); 
                 }
                 else
                 {
-                    return "Not Found";
+                    return NotFound("Not Found");
                     //return NotFound();
                 }
             }
             catch(Exception e){
-                throw;
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -62,7 +61,7 @@ namespace CRUD_NwDb.Controllers
         // POST: CustomerController/Create
         [HttpPost("Create/post")]
         //[ValidateAntiForgeryToken]
-        public string Create(IFormCollection collection)
+        public IActionResult Create(IFormCollection collection)
         {
             try
             {
@@ -83,12 +82,13 @@ namespace CRUD_NwDb.Controllers
                 _db.SaveChanges();
 
                 string obj_json = JsonConvert.SerializeObject(obj);
-                return obj_json;
+                return Ok(obj_json);
                 //return RedirectToAction("Index");
             }
-            catch
+            catch (Exception e)
             {
-                return "Error";
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -96,7 +96,7 @@ namespace CRUD_NwDb.Controllers
         // POST: CustomerController/Edit/5
         [HttpPost("Edit")]
         //[ValidateAntiForgeryToken]
-        public string Edit(IFormCollection collection)
+        public IActionResult Edit(IFormCollection collection)
         {
             try
             {
@@ -117,16 +117,17 @@ namespace CRUD_NwDb.Controllers
                     _db.SaveChanges();
 
                     string obj_json = JsonConvert.SerializeObject(obj);
-                    return obj_json;
+                    return NoContent();
                 }
                 else
                 {
-                    return "Record not found";
+                    return NotFound();
                 }
-}
-            catch
+            }
+            catch (Exception e)
             {
-                return "Not working";
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -134,7 +135,7 @@ namespace CRUD_NwDb.Controllers
         // POST: CustomerController/Delete/5
         [HttpPost("Delete")]
         //[ValidateAntiForgeryToken]
-        public string Delete(IFormCollection collection)
+        public IActionResult Delete(IFormCollection collection)
         {
             try
             {
@@ -147,16 +148,17 @@ namespace CRUD_NwDb.Controllers
                     _db.SaveChanges();
 
                     string obj_json = JsonConvert.SerializeObject(obj);
-                    return obj_json;
+                    return Ok(obj_json);
                 }
                 else
                 {
-                    return "Record not found";
+                    return NotFound();
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -174,8 +176,10 @@ namespace CRUD_NwDb.Controllers
                     return Ok(records);
                 }
             }
-            catch(Exception e){
-                throw;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return NotFound(e.Message);
             }
         }
 
@@ -199,8 +203,10 @@ namespace CRUD_NwDb.Controllers
                     return Ok(customer);
                 }
             }
-            catch(Exception e){
-                throw;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -237,8 +243,8 @@ namespace CRUD_NwDb.Controllers
             }
             catch (Exception e)
             {
-                throw;
-                return NoContent();
+                Console.WriteLine(e.Message);
+                return StatusCode(500);
             }
         }
     }
