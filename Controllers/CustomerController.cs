@@ -1,17 +1,18 @@
-﻿using CRUD_NwDb.Data;
+using CRUD_NwDb.Data;
 using CRUD_NwDb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using CsvHelper;
 using System.Globalization;
 using System.Text;
 using CsvHelper.Configuration;
-using System.IO;
-using CsvHelper;
 
 namespace CRUD_NwDb.Controllers
 {
@@ -28,7 +29,7 @@ namespace CRUD_NwDb.Controllers
 
         // GET: CustomerController
         [Route("Index")]
-        public IActionResult Index()
+        protected IActionResult Index()
         {
             return View();  
         }
@@ -60,12 +61,12 @@ namespace CRUD_NwDb.Controllers
 
         // POST: CustomerController/Create
         [HttpPost("Create/post")]
+        [Consumes("multipart/form-data")] // Required when testing in Swagger
         //[ValidateAntiForgeryToken]
         public IActionResult Create(IFormCollection collection)
         {
             try
             {
-                //Console.WriteLine(collection);
                 Customer obj = new Customer();
                 // As SET IDENTITY_INSERT Customer is set OFF, PK will be auto incremented and need not be inserted in the query
                 // obj.CustomerId = int.Parse(collection["CustomerId"]);
@@ -95,6 +96,7 @@ namespace CRUD_NwDb.Controllers
 
         // POST: CustomerController/Edit/5
         [HttpPost("Edit")]
+        [Consumes("multipart/form-data")]
         //[ValidateAntiForgeryToken]
         public IActionResult Edit(IFormCollection collection)
         {
@@ -134,6 +136,7 @@ namespace CRUD_NwDb.Controllers
 
         // POST: CustomerController/Delete/5
         [HttpPost("Delete")]
+        [Consumes("multipart/form-data")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(IFormCollection collection)
         {
