@@ -1,4 +1,4 @@
-using CRUD_NwDb.Data;
+using CRUD.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -79,6 +79,7 @@ namespace CRUD_NwDb
 
             app.UseEndpoints(endpoints =>
             {
+
                 endpoints.MapControllers();
             });
         }
