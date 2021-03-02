@@ -1,7 +1,11 @@
 using CRUD.DataAccess;
+using CRUD.DataAccess.Data.Repository;
+using CRUD.DataAccess.Data.Repository.IRepository;
+using CRUD.Models.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +35,10 @@ namespace CRUD_NwDb
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores <ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddAutoMapper(typeof(Startup));
             services.AddSwaggerGen(swagger =>
             {
                 //This is to generate the Default UI of Swagger Documentation    
@@ -42,6 +49,9 @@ namespace CRUD_NwDb
                     Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
                 });
             });
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ISP_call, SP_call>();
 
             services.AddLiveReload(config =>
             {

@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD_NwDb", "CRUD_NwDb.csproj", "{24A44C26-CF37-4E77-98AA-B00F9B5C6951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.Models", "..\CRUD.Models\CRUD.Models.csproj", "{FFB1521B-4E07-4A23-8E9C-9179D3CE81D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.Models", "..\CRUD.Models\CRUD.Models.csproj", "{FFB1521B-4E07-4A23-8E9C-9179D3CE81D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.DataAccess", "..\CRUD.DataAccess\CRUD.DataAccess.csproj", "{41B3D7C2-80EF-4030-992A-8BDCC525AD25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.DataAccess", "..\CRUD.DataAccess\CRUD.DataAccess.csproj", "{41B3D7C2-80EF-4030-992A-8BDCC525AD25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.Utility", "..\CRUD.Utility\CRUD.Utility.csproj", "{F33525D3-C6C7-41D5-A917-6A4BE6ABD505}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.Utility", "..\CRUD.Utility\CRUD.Utility.csproj", "{F33525D3-C6C7-41D5-A917-6A4BE6ABD505}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

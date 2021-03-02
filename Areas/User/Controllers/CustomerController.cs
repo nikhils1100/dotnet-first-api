@@ -13,6 +13,10 @@ using System.Globalization;
 using System.Text;
 using CsvHelper.Configuration;
 using CRUD.DataAccess;
+using CRUD.DataAccess.Data.Repository.IRepository;
+using CRUD.DataAccess.Data.Repository;
+using CRUD.Utility;
+using Dapper;
 
 namespace CRUD_NwDb.Controllers
 {
@@ -20,11 +24,11 @@ namespace CRUD_NwDb.Controllers
     [ApiController]
     public class CustomerController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
         
-        public CustomerController(ApplicationDbContext db)
+        public CustomerController(IUnitOfWork uow)
         {
-            _db = db;
+            _unitOfWork = uow;
         }
 
         // GET: CustomerController
@@ -39,7 +43,7 @@ namespace CRUD_NwDb.Controllers
         public IActionResult Details(int CustomerId)
         {
             try{
-                var objList = _db.Customer.Find(CustomerId);
+                var objList = _unitOfWork.Customer.Get(CustomerId);
                 if (objList!= null)
                 {
                     string obj_json = JsonConvert.SerializeObject(objList);
@@ -58,6 +62,35 @@ namespace CRUD_NwDb.Controllers
             }
         }
 
+
+        // GET: CustomerController/Details/5
+        [HttpGet("details/GetAll")]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var storedProcedure = SD.SP_GetAllCustomer;
+                // var param = new DynamicParameters();
+
+                var objList = _unitOfWork.SP_call.List<Customer>(storedProcedure);
+                if (objList != null)
+                {
+                    string obj_json = JsonConvert.SerializeObject(objList);
+
+                    return Ok(obj_json);
+                }
+                else
+                {
+                    return NotFound("Not Found");
+                    //return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
 
         // POST: CustomerController/Create
         [HttpPost("Create/post")]
@@ -79,16 +112,29 @@ namespace CRUD_NwDb.Controllers
                 obj.Region = collection["Region"];
                 obj.PostalCode = collection["PostalCode"];
 
-                _db.Customer.Add(obj);
-                _db.SaveChanges();
+                _unitOfWork.Customer.Add(obj);
+                _unitOfWork.Save();
 
                 string obj_json = JsonConvert.SerializeObject(obj);
                 return Ok(obj_json);
                 //return RedirectToAction("Index");
-            }
+                /*
+
+                {
+                "CompanyName":"Datagrokr",
+                "Address":"Bangalore",
+                "City":"Bangalore",
+                "Region":"Bangalore",
+                "Country":"India",
+                "PostalCode":"176117",
+                "Phone":"2982982098",
+                "Fax":"87287"
+                }
+               */
+                    }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e.Message.ToString());
                 return BadRequest(e.Message);
             }
         }
@@ -103,7 +149,7 @@ namespace CRUD_NwDb.Controllers
             try
             {
                 int id = int.Parse(collection["CustomerId"]);
-                var obj = _db.Customer.FirstOrDefault(b => b.CustomerId == id);
+                var obj = _unitOfWork.Customer.GetFirstOrDefault(b => b.CustomerId == id);
 
                 if (obj != null)
                 {
@@ -116,7 +162,7 @@ namespace CRUD_NwDb.Controllers
                     obj.Region = collection["Region"];
                     obj.PostalCode = collection["PostalCode"];
 
-                    _db.SaveChanges();
+                    _unitOfWork.Save();
 
                     string obj_json = JsonConvert.SerializeObject(obj);
                     return NoContent();
@@ -143,12 +189,12 @@ namespace CRUD_NwDb.Controllers
             try
             {
                 int id = int.Parse(collection["CustomerId"]);
-                var obj = _db.Customer.FirstOrDefault(b => b.CustomerId == id);
+                var obj = _unitOfWork.Customer.GetFirstOrDefault(b => b.CustomerId == id);
 
                 if (obj != null)
                 {
-                    _db.Customer.Remove(obj);
-                    _db.SaveChanges();
+                    _unitOfWork.Customer.Remove(obj);
+                    _unitOfWork.Save();
 
                     string obj_json = JsonConvert.SerializeObject(obj);
                     return Ok(obj_json);
@@ -236,9 +282,9 @@ namespace CRUD_NwDb.Controllers
                         obj.PostalCode = r.PostalCode;
                         obj.Region = r.Region;
 
-                        _db.Customer.Add(obj);
+                        _unitOfWork.Customer.Add(obj);
                     }
-                    _db.SaveChanges();
+                    _unitOfWork.Save();
 
                     records = csv_reader.GetRecords<Customer>().ToList();
                     return Ok(records);
