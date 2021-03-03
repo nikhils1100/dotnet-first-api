@@ -85,6 +85,8 @@ namespace CRUD_NwDb
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

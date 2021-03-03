@@ -3,20 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.IO;
 using CsvHelper;
 using System.Globalization;
-using System.Text;
 using CsvHelper.Configuration;
-using CRUD.DataAccess;
 using CRUD.DataAccess.Data.Repository.IRepository;
-using CRUD.DataAccess.Data.Repository;
 using CRUD.Utility;
-using Dapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CRUD_NwDb.Controllers
 {
@@ -39,6 +33,7 @@ namespace CRUD_NwDb.Controllers
         }
 
         // GET: CustomerController/Details/5
+        [Authorize]
         [HttpGet("details/{CustomerId}")]
         public IActionResult Details(int CustomerId)
         {
